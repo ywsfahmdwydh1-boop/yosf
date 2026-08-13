@@ -8,8 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build Android APK
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout
@@ -22,22 +21,23 @@ jobs:
             git zip unzip openjdk-17-jdk python3-pip \
             python3-virtualenv autoconf libtool pkg-config \
             zlib1g-dev libncurses5-dev libncursesw5-dev \
-            cmake libffi-dev libssl-dev automake \
-            autopoint gettext
+            libtinfo5 cmake libffi-dev libssl-dev \
+            automake
 
       - name: Install Rust
         run: |
           curl https://sh.rustup.rs -sSf | sh -s -- -y
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
 
       - name: Install Buildozer
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install buildozer cython==0.29.37
+          python3 -m pip install buildozer
+          python3 -m pip install "cython==0.29.34"
 
       - name: Build APK
         run: |
-          buildozer android debug
+          buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
