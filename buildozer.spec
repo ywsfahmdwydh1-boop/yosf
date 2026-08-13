@@ -18,8 +18,8 @@ android.accept_sdk_license = True
 android.api = 35
 android.minapi = 21
 android.ndk = 28c
+android.ndk_api = 21
 android.archs = arm64-v8a
-
 
 [buildozer]
 
