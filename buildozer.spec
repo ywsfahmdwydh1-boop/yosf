@@ -1,27 +1,44 @@
-[app]
+name: Build Kivy App to APK
 
-title = Guess Master
-package.name = guessmaster
-package.domain = org.guessmaster
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
-source.dir = .
-source.include_exts = py,png,jpg,jpeg,kv,atlas,json
+jobs:
+  build:
+    runs-on: ubuntu-24.04
 
-version = 1.0
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-requirements = python3,kivy
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-orientation = portrait
-fullscreen = 0
+      - name: Install Dependencies & Buildozer
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip install --upgrade pip
+          pip install buildozer Cython==0.29.33
 
-android.accept_sdk_license = True
-android.api = 35
-android.minapi = 21
-android.ndk = 28c
-android.ndk_api = 21
-android.archs = arm64-v8a
+      - name: Fix Ubuntu 24.04 NDK Header Bug and Build APK
+        run: |
+          # إخفاء ملفات النظام المؤقتة لمنع خطأ الترجمة
+          sudo mv /usr/include/x86_64-linux-gnu /usr/include/x86_64-linux-gnu.bak
+          
+          # تشغيل البناء
+          buildozer -v android debug
+          
+          # إعادة الملفات لحالتها الأصلية بعد الانتهاء
+          sudo mv /usr/include/x86_64-linux-gnu.bak /usr/include/x86_64-linux-gnu
 
-[buildozer]
-
-log_level = 2
-warn_on_root = 0
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: bin/*.apk
