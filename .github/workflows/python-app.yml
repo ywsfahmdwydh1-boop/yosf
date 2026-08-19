@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout Code
@@ -26,16 +26,9 @@ jobs:
           pip install --upgrade pip
           pip install buildozer Cython==0.29.33
 
-      - name: Fix Ubuntu 24.04 NDK Header Bug and Build APK
+      - name: Build APK with Buildozer
         run: |
-          # إخفاء ملفات النظام المؤقتة لمنع خطأ الترجمة مع أوبونتو 24
-          sudo mv /usr/include/x86_64-linux-gnu /usr/include/x86_64-linux-gnu.bak
-          
-          # تشغيل البناء مع تفاصيل كاملة لتتبع أي خطأ بدقة
-          buildozer -v android debug || (echo "=== BUILD FAILED ===" && exit 1)
-          
-          # إعادة الملفات لحالتها الأصلية بعد الانتهاء
-          sudo mv /usr/include/x86_64-linux-gnu.bak /usr/include/x86_64-linux-gnu
+          buildozer -v android debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
