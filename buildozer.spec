@@ -9,10 +9,16 @@ package.name = guessmaster
 # (str) Package domain (needed for android packaging)
 package.domain = org.game
 
-# (list) Source files to include (let it include your python files and assets)
+# (str) Source code directory (where your main.py is)
+source.dir = .
+
+# (str) Application versioning (add this line)
+version = 0.1
+
+# (list) Source files to include
 source.include_exts = py,png,jpg,kv,atlas,json
 
-# (str) Application requirements
+# (list) Application requirements
 requirements = python3,kivy,android
 
 # (str) Supported orientations
